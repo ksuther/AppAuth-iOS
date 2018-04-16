@@ -280,6 +280,10 @@ static NSString *const kAdditionalParametersKey = @"additionalParameters";
 
     NSString *authValue = [NSString stringWithFormat:@"Basic %@", basicAuth];
     [httpHeaders setObject:authValue forKey:@"Authorization"];
+
+    // Workaround for server-side problems with Google as of 2018-04-16 (https://github.com/openid/AppAuth-iOS/issues/226)
+    [bodyParameters addParameter:kClientIDKey value:_clientID];
+    [bodyParameters addParameter:kClientSecretKey value:_clientSecret];
   } else  {
     [bodyParameters addParameter:kClientIDKey value:_clientID];
   }

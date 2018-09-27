@@ -20,6 +20,7 @@
 
 #import "OIDAuthorizationService.h"
 #import "OIDErrorUtilities.h"
+#import "OIDExternalUserAgentSession.h"
 #import "OIDLoopbackHTTPServer.h"
 
 /*! @brief Page that is returned following a completed authorization. Show your own page instead by
@@ -31,7 +32,7 @@ static NSString *const kHTMLAuthorizationComplete =
 /*! @brief Error warning that the @c currentAuthorizationFlow is not set on this object (likely a
         developer error, unless the user stumbled upon the loopback server before the authorization
         had started completely).
-    @description An object conforming to @c OIDAuthorizationFlowSession is returned when the 
+    @description An object conforming to @c OIDExternalUserAgentSession is returned when the
         authorization is presented with
         @c OIDAuthorizationService::presentAuthorizationRequest:callback:. It should be set to
         @c currentAuthorization when using a loopback redirect.
@@ -46,9 +47,10 @@ static NSString *const kHTMLErrorMissingCurrentAuthorizationFlow =
 static NSString *const kHTMLErrorRedirectNotValid =
     @"<html><body>AppAuth Error: Not a valid redirect.</body></html>";
 
-@implementation OIDRedirectHTTPHandler
-
-@synthesize currentAuthorizationFlow = _currentAuthorizationFlow;
+@implementation OIDRedirectHTTPHandler {
+  HTTPServer *_httpServ;
+  NSURL *_successURL;
+}
 
 - (instancetype)init {
   return [self initWithSuccessURL:nil];
@@ -97,7 +99,7 @@ static NSString *const kHTMLErrorRedirectNotValid =
       [OIDErrorUtilities errorWithCode:OIDErrorCodeProgramCanceledAuthorizationFlow
                        underlyingError:nil
                            description:@"The HTTP listener was cancelled programmatically."];
-  [_currentAuthorizationFlow failAuthorizationFlowWithError:cancelledError];
+  [_currentAuthorizationFlow failExternalUserAgentFlowWithError:cancelledError];
   _currentAuthorizationFlow = nil;
 }
 
@@ -114,7 +116,7 @@ static NSString *const kHTMLErrorRedirectNotValid =
 - (void)HTTPConnection:(HTTPConnection *)conn didReceiveRequest:(HTTPServerRequest *)mess {
   // Sends URL to AppAuth.
   CFURLRef url = CFHTTPMessageCopyRequestURL(mess.request);
-  BOOL handled = [_currentAuthorizationFlow resumeAuthorizationFlowWithURL:(__bridge NSURL *)url];
+  BOOL handled = [_currentAuthorizationFlow resumeExternalUserAgentFlowWithURL:(__bridge NSURL *)url];
 
   // Stops listening to further requests after the first valid authorization response.
   if (handled) {

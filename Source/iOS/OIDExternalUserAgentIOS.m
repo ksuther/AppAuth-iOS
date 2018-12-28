@@ -21,9 +21,9 @@
 #import <SafariServices/SafariServices.h>
 #import <AuthenticationServices/AuthenticationServices.h>
 
-#import "OIDErrorUtilities.h"
-#import "OIDExternalUserAgentSession.h"
-#import "OIDExternalUserAgentRequest.h"
+#import <AppAuthCore/OIDErrorUtilities.h>
+#import <AppAuthCore/OIDExternalUserAgentSession.h>
+#import <AppAuthCore/OIDExternalUserAgentRequest.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

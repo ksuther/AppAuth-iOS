@@ -18,8 +18,8 @@
 
 #import <UIKit/UIKit.h>
 
-#import "OIDAuthorizationService.h"
-#import "OIDExternalUserAgentSession.h"
+#import <AppAuthCore/OIDAuthorizationService.h>
+#import <AppAuthCore/OIDExternalUserAgentSession.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

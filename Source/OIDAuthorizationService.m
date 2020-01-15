@@ -108,6 +108,21 @@ NS_ASSUME_NONNULL_BEGIN
   NSURL *standardizedURL = [URL standardizedURL];
   NSURL *standardizedRedirectURL = [redirectionURL standardizedURL];
 
+  // Check if CFBundleURLSchemes contains the custom scheme first
+  NSArray *URLTypes = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleURLTypes"];
+  if (URLTypes != nil) {
+    for (NSInteger i = 0; i < [URLTypes count]; ++i) {
+      NSDictionary *schemesDict = [URLTypes objectAtIndex:i];
+      NSArray *schemes = [schemesDict objectForKey:@"CFBundleURLSchemes"];
+      for (NSInteger j = 0; j < [schemes count]; ++j) {
+        NSString *scheme = [schemes objectAtIndex:j];
+        if (OIDIsEqualIncludingNil(scheme, standardizedURL.scheme)) {
+          return YES;
+        }
+      }
+    }
+  }
+
   return [standardizedURL.scheme caseInsensitiveCompare:standardizedRedirectURL.scheme] == NSOrderedSame
       && OIDIsEqualIncludingNil(standardizedURL.user, standardizedRedirectURL.user)
       && OIDIsEqualIncludingNil(standardizedURL.password, standardizedRedirectURL.password)
@@ -152,7 +167,7 @@ NS_ASSUME_NONNULL_BEGIN
                                                       parameters:query.dictionaryValue];
       
     // verifies that the state in the response matches the state in the request, or both are nil
-    if (!OIDIsEqualIncludingNil(_request.state, response.state)) {
+    if (!OIDIsEqualIncludingNil(_request.state ?: @"", response.state ?: @"")) {
       NSMutableDictionary *userInfo = [query.dictionaryValue mutableCopy];
       userInfo[NSLocalizedDescriptionKey] =
         [NSString stringWithFormat:@"State mismatch, expecting %@ but got %@ in authorization "

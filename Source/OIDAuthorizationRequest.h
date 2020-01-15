@@ -134,6 +134,8 @@ extern NSString *const OIDOAuthorizationRequestCodeChallengeMethodS256;
  */
 @property(nonatomic, readonly, nullable) NSDictionary<NSString *, NSString *> *additionalParameters;
 
+@property(nonatomic, copy, nullable) NSString *overrideRedirectScheme;
+
 /*! @internal
     @brief Unavailable. Please use
         @c initWithConfiguration:clientId:scopes:redirectURL:responseType:additionalParameters:.

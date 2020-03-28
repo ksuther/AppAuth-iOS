@@ -18,7 +18,10 @@
 
 #import "OIDAuthState+IOS.h"
 #import "OIDExternalUserAgentIOS.h"
+
+#if TARGET_OS_MACCATALYST
 #import "OIDExternalUserAgentCatalyst.h"
+#endif
 
 @implementation OIDAuthState (IOS)
 

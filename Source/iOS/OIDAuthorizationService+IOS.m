@@ -18,7 +18,10 @@
 
 #import "OIDAuthorizationService+IOS.h"
 #import "OIDExternalUserAgentIOS.h"
+
+#if TARGET_OS_MACCATALYST
 #import "OIDExternalUserAgentCatalyst.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
